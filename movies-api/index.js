@@ -1,3 +1,5 @@
+import './seedData';
+import './db/index.js';
 import dotenv from 'dotenv';
 import express from 'express';
 //updating index.js to use the new movies routing script
