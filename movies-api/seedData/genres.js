@@ -14,5 +14,6 @@ const genres= [
     {
         "id": 35,
         "name": "Comedy"
-    }
-]
+    },
+];
+export default genres;
