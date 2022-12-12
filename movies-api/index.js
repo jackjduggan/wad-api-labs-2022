@@ -1,14 +1,17 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+
 import dotenv from 'dotenv';
 import express from 'express';
 //updating index.js to use the new movies routing script
 import moviesRouter from './api/movies';
 import genresRouter from './api/genres';
-import usersRouter from './api/users';
-import session from 'express-session';
-import authenticate from './authenticate';
 import './db';
 import './seedData';
+import usersRouter from './api/users';
+import session from 'express-session';
+// replace existing import with passport strategy​
+import passport from './authenticate';
 
 dotenv.config();
 
@@ -24,25 +27,21 @@ const errHandler = (err, req, res, next) => {
 
 const app = express();
 
+//session middleware
+// replace app.use(session([... with the following:
+app.use(passport.initialize());
+
 // eslint-disable-next-line no-undef
 const port = process.env.PORT;
 
 app.use(express.json());
-app.use('/api/movies', moviesRouter); //movies router
+
 app.use('/api/genres', genresRouter); //genres router
 app.use('/api/users', usersRouter); //users router
 
-//session middleware
-app.use(session({
-    secret: 'ilikecake',
-    resave: true,
-    saveUninitialized: true
-}));
+app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
+app.use(errHandler);
 
 app.listen(port, () => {
   console.info(`Server running at ${port}`);
 });
-
-app.use('/api/movies', authenticate, moviesRouter);
-
-app.use(errHandler);
